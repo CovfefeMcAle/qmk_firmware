@@ -1,69 +1,128 @@
-/* Copyright 2020 tominabox1
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include QMK_KEYBOARD_H
 
 enum layers{
   _BASE,
   _NUM_SYM,
-  _NAV
+  _NAV,
+  _NUMPAD,
 };
+
 
 enum combo_events {
-  COMBO_BSPC,
-  COMBO_NUMBAK,
-  COMBO_TAB,
-  COMBO_ESC,
-  COMBO_DEL,
+  combo_ESC,
+  combo_BACK,
+  combo_TAB,
+  combo_DELETE,
+  combo_QUOT,
+  combo_MINS,
+  combo_PLUS,
+  combo_EMDASH,
+  combo_ENT,
+  
 };
 
-#define KC_NUM_SPC LT(_NUM_SYM, KC_SPC)
-#define KC_GA LGUI_T(KC_A)
-#define KC_AS LALT_T(KC_S)
-#define KC_CD LCTL_T(KC_D)
-#define KC_SF LSFT_T(KC_F)
-#define KC_SJ RSFT_T(KC_J)
-#define KC_CK RCTL_T(KC_K)
-#define KC_AL RALT_T(KC_L)
-#define KC_GSCLN RGUI_T(KC_SCLN)
+const uint16_t PROGMEM esc_combo[] = {KC_Q, KC_W, COMBO_END};
+const uint16_t PROGMEM bspc_combo[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM tab_combo[] = {KC_A, KC_S, COMBO_END};
+const uint16_t PROGMEM del_combo[] = {KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM quot_combo[] = {KC_U, KC_I, COMBO_END};
+const uint16_t PROGMEM mins_combo[] = {KC_U, KC_O, COMBO_END};
+const uint16_t PROGMEM plus_combo[] = {KC_J, KC_L, COMBO_END};
+const uint16_t PROGMEM emdash_combo[] = {KC_Y, KC_P, COMBO_END};
+const uint16_t PROGMEM ent_combo[] = {KC_L, KC_SCLN, COMBO_END};
+
+
+combo_t key_combos[COMBO_COUNT] = {
+  [combo_ESC] = COMBO(esc_combo, KC_ESC),
+   [combo_BACK] = COMBO(bspc_combo, KC_BSPC),
+    [combo_TAB] = COMBO(tab_combo, KC_TAB),
+     [combo_DELETE] = COMBO(del_combo, KC_DEL), 
+       [combo_QUOT] = COMBO(quot_combo, KC_QUOT),
+        [combo_MINS] = COMBO(mins_combo, KC_MINS),
+         [combo_PLUS] = COMBO(plus_combo, KC_PLUS),
+          [combo_EMDASH] = COMBO(emdash_combo, LSFT(LALT(KC_MINS))),
+           [combo_ENT] = COMBO(ent_combo, KC_ENT),
+            
+
+};
+
+
+#define KC_SZ LSFT_T(KC_Z)
+#define KC_CB LCTL_T(KC_B)
+#define KC_SSLSH RSFT_T(KC_SLSH)
+#define BASE TO(_BASE)
+#define NUMPAD TO(_NUMPAD)
+#define NUM MO(_NUM_SYM)
+#define xxx KC_TRNS
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_BASE] = LAYOUT(
     KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,  KC_MPLY,  KC_Y,   KC_U,    KC_I,   KC_O,     KC_P,
-   KC_GA,  KC_AS,  KC_CD,  KC_SF,   KC_G,            KC_H,  KC_SJ,   KC_CK,  KC_AL, KC_GSCLN,
-    KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,            KC_N,   KC_M, KC_COMM, KC_DOT,  KC_SLSH,
-                         KC_LCTL, KC_ENT,            KC_NUM_SPC, MO(_NAV)
+    KC_A,   KC_S,   KC_D,   KC_F,   KC_G,            KC_H,   KC_J,    KC_K,   KC_L,    KC_SCLN,
+    KC_SZ,  KC_X,   KC_C,   KC_V,   KC_CB,           KC_N,   KC_M,   KC_COMM, KC_DOT,  KC_SSLSH,
+                           KC_LCMD, NUM,     LT(_NAV, KC_SPC), KC_RALT
   ),
 
   [_NUM_SYM] = LAYOUT(
-        KC_1,  KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
-    KC_EXLM,  KC_AT,  KC_HASH,   KC_DLR,   KC_PERC,            KC_CIRC,  KC_AMPR,  KC_ASTR, KC_EQUAL,  KC_MINS,
-    KC_BSLS,KC_LCBR,  KC_LBRC,  KC_LPRN,   KC_UNDS,            KC_RPRN,  KC_RBRC,  KC_RCBR,   KC_DOT,   KC_GRV,
-                                KC_CAPS,   KC_TRNS,            KC_TRNS,  KC_TRNS
+  KC_1,  KC_2,     KC_3,     KC_4,      KC_5,   NUMPAD,  KC_6,     KC_7,     KC_8,    KC_9,     KC_0,
+  KC_EXLM, KC_AT,  KC_HASH,  KC_DLR,  KC_PERC,        KC_CIRC,  KC_AMPR,  KC_ASTR, KC_EQUAL,  KC_MINS,
+  KC_BSLS,  KC_LCBR, KC_LBRC, KC_UNDS,  KC_LPRN,        KC_RPRN, KC_RBRC,  KC_RCBR, KC_DOT,   KC_PLUS,
+                              KC_CAPS,  KC_TRNS,        KC_TRNS,  KC_TRNS
   ),
 
   [_NAV] = LAYOUT(
-      RESET,  _______,  AG_NORM,  AG_SWAP,  DEBUG, KC_TRNS,   KC_GRV,  KC_PGDN,    KC_UP,  KC_PGUP,  KC_SCLN,
+      RESET,  _______,  AG_NORM,  AG_SWAP,  DEBUG, KC_TRNS,   KC_TILD,  KC_PGDN,    KC_UP,  KC_PGUP,  KC_BSPC,
     RGB_TOG,  RGB_HUI,  RGB_SAI,  RGB_VAI,  KC_NO,           KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
-    RGB_MOD,  RGB_HUD,  RGB_SAD,  RGB_VAD,  KC_NO,           KC_MINS,    KC_RO,  KC_COMM,   KC_DOT,  KC_BSLS,
-                                  KC_TRNS,KC_TRNS,           KC_TRNS,  KC_TRNS
+    RGB_MOD,  RGB_HUD,  RGB_SAD,  RGB_VAD,  KC_NO,           KC_MINS,  KC_RO,    KC_COMM,  KC_DOT,  KC_BSLS,
+                                  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS
   ),
+
+[_NUMPAD] = LAYOUT(
+  	xxx, xxx, xxx, xxx, xxx, BASE, KC_BSPC, KC_P7, KC_P8, KC_P9, KC_PMNS,
+  	xxx, xxx, xxx, xxx, xxx,       KC_PSLS, KC_P4, KC_P5, KC_P6, KC_PPLS,
+  	xxx, xxx, xxx, xxx, xxx,       KC_PAST, KC_P1, KC_P2, KC_P3, KC_PEQL, 
+  	               xxx, KC_PENT,       KC_P0, KC_PDOT
+   ),
 };
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LT(_NAV, KC_SPC):
+            return TAPPING_TERM + 400;
+        case KC_CB:
+            return TAPPING_TERM + 350;
+        case KC_SZ:
+            return TAPPING_TERM + 75;
+        case KC_SSLSH:
+            return TAPPING_TERM + 75;
+        default:
+            return TAPPING_TERM;
+    }
+}
+bool get_permiSSLSHsive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_SZ:
+            return true;
+	 case KC_SSLSH:
+	    return true;
+        default:
+             return false;
+    }
+}
+bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_SZ:
+            return true;
+	 case KC_SSLSH:
+	    return true;
+        default:
+             return false;
+    }
+}
+
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) {
+    if (index == 0) { /* First encoder */
         if (clockwise) {
             tap_code(KC_VOLU);
         } else {
@@ -71,24 +130,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         }
     }
     return true;
-}
+}  
 
-#ifdef COMBO_ENABLE
-const uint16_t PROGMEM combo_bspc[] = {KC_O, KC_P, COMBO_END};
-const uint16_t PROGMEM combo_numbak[] = {KC_0, KC_9, COMBO_END};
-const uint16_t PROGMEM combo_tab[] = {KC_Q, KC_W, COMBO_END};
-const uint16_t PROGMEM combo_esc[] = {KC_E, KC_W, COMBO_END};
-const uint16_t PROGMEM combo_del[] = {KC_MINS, KC_EQL, COMBO_END};
 
-combo_t key_combos[COMBO_COUNT] = {
-  [COMBO_BSPC] = COMBO(combo_bspc,KC_BSPC),
-  [COMBO_NUMBAK] = COMBO(combo_numbak,KC_BSPC),
-  [COMBO_TAB] = COMBO(combo_tab,KC_TAB),
-  [COMBO_ESC] = COMBO(combo_esc,KC_ESC),
-  [COMBO_DEL] = COMBO(combo_del,KC_DEL),
-
-};
-#endif
 
 #ifdef OLED_DRIVER_ENABLE  //Special thanks to Sickbabies for this great OLED widget!
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -200,4 +244,52 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
   }
+void rgb_matrix_helper(uint8_t hue, uint8_t sat, uint8_t val, uint8_t i, uint8_t mode) {
+    HSV hsv = {hue, sat, val};
+    if (hsv.v > rgb_matrix_get_val()) {
+        hsv.v = rgb_matrix_get_val();
+    }
+    switch (mode) {
+        case 1:  // breathing
+        {
+            uint8_t speed = rgb_matrix_config.speed;
+            uint16_t time = scale16by8(g_rgb_timer, speed / 8);
+            hsv.v         = scale8(abs8(sin8(time) - 128) * 2, hsv.v);
+            RGB rgb       = hsv_to_rgb(hsv);
+            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+
+            break;
+        }
+        default:  // Solid Color
+        {
+            RGB rgb = hsv_to_rgb(hsv);
+            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+            //RGB_MATRIX_INDICATOR_SET_COLOR(i, rgb.r, rgb.g, rgb.b);
+            break;
+        }
+    }
+}
+
+void rgb_matrix_indicators_user() {
+    if (host_keyboard_led_state().caps_lock) {
+        rgb_matrix_helper(21, 255, 100, 9, 1);
+        rgb_matrix_helper(21, 255, 100, 10, 1);
+    } else {
+        rgb_matrix_helper(0, 0, 0, 9, 0);
+        rgb_matrix_helper(0, 0, 0, 10, 0);
+    }
+    
+switch (get_highest_layer(layer_state)) {
+    case _NUM_SYM:
+        rgb_matrix_helper(148, 255, 70, 9, 0);
+        break;
+    case _NAV:
+        rgb_matrix_helper(85, 255, 70, 10, 0);
+        break;
+    case _META:
+        rgb_matrix_helper(148, 255, 70, 9, 0);
+        rgb_matrix_helper(85, 255, 70, 10, 0);
+        break;
+    }
+}
 #endif
